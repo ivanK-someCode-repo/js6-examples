@@ -5,27 +5,27 @@ module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    uglify: {
-      options: {
-        banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
-      },
-	  my_target:{
-			files: {
-			'script.js' : ['common.js']
-			} //files
-		},
-      build: {
-        src: 'src/<%= pkg.name %>.js',
-        dest: 'build/<%= pkg.name %>.min.js'
-      }		
-    },
+    // uglify: {
+      // options: {
+        // banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+      // },
+	  // my_target:{
+			// files: {
+			// 'script.js' : ['common.js']
+			// } //files
+		// },
+      // build: {
+        // src: 'src/<%= pkg.name %>.js',
+        // dest: 'build/<%= pkg.name %>.min.js'
+      // }		
+    // },
 	sass: {
         options: {
             sourceMap: true
         },
         dist: {
             files: {
-                'styles.css': ['commonsas.scss']
+                'prod/styles.css': ['dev/input.scss']
             }
         }
     },
@@ -35,7 +35,7 @@ module.exports = function(grunt) {
 		},
 		dist: {
 		  files: {
-			'es5.js': ['es6.js']
+			'prod/scripts.js': ['dev/input.js']
 		  }
 		}
   }
@@ -43,10 +43,12 @@ module.exports = function(grunt) {
   });
 
   // Load the plugin that provides the "uglify" task.
-  grunt.loadNpmTasks('grunt-contrib-uglify');
+  //grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-sass');
+  grunt.loadNpmTasks('grunt-babel');
 
   // Default task(s).
-  grunt.registerTask('default', ['uglify', 'sass', 'babel']);
+  grunt.registerTask('default', ['sass', 'babel']);
 
   // A very basic default task.
   grunt.registerTask('default2', 'Log some stuff.', function() {
