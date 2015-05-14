@@ -36,7 +36,7 @@ class MInput {
         this.inputContainer = this.buildDom(classes);
 		this.listenDom(this.inputContainer, eventListeners);
     }
-	
+	const divClass_Name = "blc";
     buildDom(clsasses){
 		//array destructing
 		let [inputContainer, input, clearCross] = domGenWrapperObject.createByTag('div').createByTag('input').createByTag('div');
