@@ -30,36 +30,59 @@ let domGenWrapperObject = {
 	}
 }
 
-//class!
-class MInput {
-    constructor(location, classes, eventListeners){
-        this.inputContainer = this.buildDom(classes);
-		this.listenDom(this.inputContainer, eventListeners);
+function getAllElementsWithAttribute(attribute)
+{
+  var matchingElements = [];
+  var allElements = document.getElementsByTagName('*');
+  for (var i = 0, n = allElements.length; i < n; i++)
+  {
+    if (allElements[i].getAttribute(attribute) !== null)
+    {
+      // Element exists with attribute. Add to array.
+      matchingElements.push(allElements[i]);
     }
-	const divClass_Name = "blc";
-    buildDom(clsasses){
-		//array destructing
-		let [inputContainer, input, clearCross] = domGenWrapperObject.createByTag('div').createByTag('input').createByTag('div');
-		
-		//spread operator
-		let appendArgs = [[inputContainer, input, clearCross], clsasses];
-		return domGenWrapperObject.appendChilds(...appendArgs);
-	}
+  }
+  return matchingElements;
+}
+
+//class!
+var mInputClassWrapper = function(){
+	let _MInputContainerBaseClass;
 	
-	listenDom(dom, listeners){
-		for (let i = 0; i < listeners.length; i++){
-			let domElem;
-			if listeners.type == "tag"
-				domElem = dom.getElementsByTagName(listeners.mark);
-			if listeners.type == "class"
-				domElem = dom.getElementsByClassName(listeners.mark);
-			else
-				continue;
-			domElem.addEventListener(listeners.eventName, listeners.eventItself, false);
+	let _MInputTextElement;
+
+	class MInput {
+		constructor(baseClass){
+			_MInputContainerBaseClass = baseClass;
+			
+			this.mInputContainer = this.buildDom(_MInputContainerBaseClass);
+			
+			_MInputTextElement = this.mInputContainer.getAllElementsWithAttribute('text')[0];
+			
+			this.mInputContainer.getElementByClassName(".cross").addEventListener('click', (e)=>{this.setTextInputValue("")}, false)
+		}
+		
+		getTextInputValue(){
+			return _MInputTextElement.value;
+		}
+		
+		setTextInputValue(newValue){
+			_MInputTextElement.value = newValue;
+		}
+		
+		//возможно надо переписть buildDOm так, чтобы он наследовался, но не было повтора для, например, генерации опций комбика
+		buildDom(baseClassName){
+			//array destructing
+			let [inputContainer, input, clearCross] = domGenWrapperObject.createByTag('div').createByTag('input').createByTag('div');
+			
+			//spread operator
+			let appendArgs = [[inputContainer, input, clearCross],baseClassName];
+			return domGenWrapperObject.appendChilds(...appendArgs);
 		}
 	}
 }
 
+//из-за обертки проблемка, для наследования надо или переписать обертку или забить на приветные переменные, или вынести как-то класс из обертки
 class MSelectInput extends MInput{
     constructor(location, classes, eventListeners){
         super(location, classes, eventListeners);
@@ -91,13 +114,8 @@ let initMElements = function(){
 	let multiSelectInputElems = document.getElementsByTagName("m-multi-select-input");
 	
 	for (let i = 0; i < inputElems.length; i++){
-		let mInput = new MInput(
-							["m-input-container", "inptCls", "clear-cross"], 
-							[{'type':'class','mark':'clear-cross','eventName':'click','eventItself':(event)=>{
-								event.target.previousSibling.value = '';
-								//this.previousSibling.value = ''
-								/*отсюда надо как-то сослаться на инпут и почистить его*/}}])
-		document.replaceChild(inputElems[i], mInput.inputContainer);
+		let mInput = new (mInputClassWrapper())("blc");
+		document.replaceChild(inputElems[i], mInput.mInputContainer);
 	}	
 };
 
