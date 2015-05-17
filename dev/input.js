@@ -45,13 +45,10 @@ function getAllElementsWithAttribute(attribute)
   return matchingElements;
 }
 
-//class!
-var mInputClassWrapper = function(){
-	let _MInputContainerBaseClass;
-	
-	let _MInputTextElement;
 
-	class MInput {
+
+//class!
+class MInput {
 		constructor(baseClass){
 			_MInputContainerBaseClass = baseClass;
 			
@@ -80,6 +77,13 @@ var mInputClassWrapper = function(){
 			return domGenWrapperObject.appendChilds(...appendArgs);
 		}
 	}
+
+var mInputClassWrapper = function(cls){
+	let _MInputContainerBaseClass;
+	
+	let _MInputTextElement;
+
+	return cls;
 }
 
 //из-за обертки проблемка, для наследования надо или переписать обертку или забить на приветные переменные, или вынести как-то класс из обертки
@@ -112,6 +116,10 @@ let initMElements = function(){
 	let inputElems = document.getElementsByTagName("m-input");
 	let selectInputElems = document.getElementsByTagName("m-select-input");
 	let multiSelectInputElems = document.getElementsByTagName("m-multi-select-input");
+	
+	let clsWithLocal = mInputClassWrapper(MInput);
+	
+	let extClsWithLocal = mInputClassWrapper(MSelectInput);
 	
 	for (let i = 0; i < inputElems.length; i++){
 		let mInput = new (mInputClassWrapper())("blc");
