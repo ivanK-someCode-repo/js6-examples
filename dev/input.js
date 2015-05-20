@@ -1,7 +1,27 @@
 'use strict'
 
 //можно сделать классом - оберткой над document для удобного создания элементов
-let domGenWrapperObject = {
+let domAssistant = (function(){
+	function assistant(tagName){
+		this.elements = [];
+		this.elements[0] = document.createElement(tagName);
+		this.elementsCount = 1;
+	};
+
+	assistant.createByTag = function(){
+		this.elements[0] = (document.createElement(tagName))
+	};
+
+	assistant.appendChilds = function(){
+
+	};
+
+	return assistant;
+})();
+
+
+
+{
 	//arrow function
 	createByTag:(tagName, stack)=>{
 		let self = this;
