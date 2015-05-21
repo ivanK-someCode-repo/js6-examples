@@ -3,68 +3,91 @@
 	$m-font-size: 14px;
 	$m-border-color: #000;
 
+	*{
+	  box-sizing:border-box;
+	  padding: 0;
+	  margin:0;
+	}
+
 	//rules
-	display: block;
-	box-sizing: border-box;
+	position:relative;
+	display:block;
 	font-size:$m-font-size;
-	line-height:1em;
-	height: 1.56em;
-	width:inherit;
-	min-width:calc(1.4em + 0.28em + 0.14em + 1em);
-	padding: 0.14em;
-	border: 0.07em solid $m-border-color;
+	font-family:Georgia, 'Times New Roman', Times, serif;
+	height: calc(1em + 10px);
+	width:7em;
+	border: 0;
+	background-color:#fff;
 
-	input {
-		display: inline-block;
-		vertical-align: middle;
-		border:0;
-		padding:0;
-		height:1.14em;
-		width: calc(100% - 1.14em - 0.28em - 0.14em);
-		
-		:focused{
-			outline-style:none;
-			box-shadow:none;
-			border-color:transparent;
+	input[type='text'] {
+	  border:1px solid $m-border-color;
+	  padding:2px calc(1em + 6px) 2px 2px;
+	  height:inherit;
+	  font-size:inherit;
+	  font-family:inherit;
+	  width: 100%;
+
+	  &:focused {
+		outline-style:none;
+		box-shadow:none;
+		border-color:transparent;
+	  }
+	  }
+	
+	.clear-cross {
+	  position:absolute;
+	  right:5px;
+	  top: calc(50% - 0.5em);
+	  width:1em;
+	  height: 1em;
+	  background: url(cancel_32.svg) no-repeat center;
+	  background-size: 1.14em 1.14em;
+	  //background-size: contain; css-tricks.com/using-svg/
+
+	  &:hover {
+		cursor: pointer;
+	  }
+	}
+
+	ul {
+	  position:relative;
+	  top: 2px;
+	  width: calc(100% + 18px);
+	  max-height:5em;
+	  padding:0;
+	  margin: 0;
+	  overflow-x: hidden;
+	  overflow-y: auto;
+	  border:1px solid #d1d1d1;
+	  list-style-type:none;
+	  background-color:#fff;
+
+	  li {
+		text-overflow: ellipsis;
+		white-space: nowrap;
+
+		:hover {
+		  background-color:gray;
+		  cursor:pointer;
 		}
-	}
-	
-	.clear-cross{
-		display: inline-block;
-		vertical-align: middle;
-		width:1.14em;
-		height:1.14em;
-		background: url(cancel_32.svg) no-repeat center;
-		background-size: 1.14em 1.14em;
-		//background-size: contain; css-tricks.com/using-svg/
-	}
-	
-	ul{
-		overflow-x: hidden;
-		overflow-y: auto;
-		border:0;
-		padding:0;
-		margin: 0.21em 0px 0.21em -0.21em;
-		list-style-type:none;
-		width: calc(100% + 0.42em);
-		max-height:calc(5em + 5 * 0.14em);
+
+		> label {
+		  width: 100%;
+		  height: inherit;
+		  display: block;
+
+		  :hover {
+			cursor:pointer;
+		  }
+		}
+	  }
 	}
 
-	li{
-		border:0;
-		padding:0;
-		height:1.14em;
-		//max-width: calc(100% - 0.14em);
-	}
-
-	li:hover{
-		background-color:gray;
-		cursor:pointer;
-	}
-	
-	[type='checkbox']{
-		width:1em;
-		height:1em;
-		margin: 0 0.21em;
+	input[type='checkbox']
+	{
+	  margin: 0 2%;
+	  height: 1em;
+	  width: 1em;
+	  cursor: pointer;
 	}
 }
