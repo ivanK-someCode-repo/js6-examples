@@ -1,110 +1,147 @@
 'use strict'
 
+//TODO
+//проверка на null и тд
+
 //можно сделать классом - оберткой над document для удобного создания элементов
 let domAssistant = (function(){
+	let elementsStack = [];
+	let elementsCount = 0;
+	
+	//хотелось бы, чтоб как в jquery - объект еще и функция
 	function assistant(tagName){
-		this.elements = [];
-		this.elements[0] = document.createElement(tagName);
-		this.elementsCount = 1;
+		elementsStack = [];
+		elementsStack[0] = document.createElement(tagName);
+		elementsCount = 1;
 	};
-
+	
 	assistant.createByTag = function(){
-		this.elements[0] = (document.createElement(tagName))
+		elementsStack[0] = (document.createElement(tagName));
+		return this;
 	};
 
-	assistant.appendChilds = function(){
-
+	assistant.appendChilds = function(elements, classes){
+		if (!elements || elements.length == 0)
+			return;
+			
+		for (let i = 1; i < elements.length; i++){
+			let newElement = document.createElement(elements[i]);
+			/*
+			if (classes.hasKey(elements[i])){
+				for (let j = 1; j < classes[elements[i]].length; j++)
+					newElement.className = classes[elements[i]][j];
+			}
+			*/
+			elements[0].appendChild(elements[i]);
+			elementsStack.push(elements[i]);
+			elementsCount++;
+		};	
+			
+		return this;
 	};
 
+	assistant.getDocumentElementsWithAttribute = function(attributeName, element = document)
+	{
+		//старый код
+		/*
+		let matchingElements = [];
+		let allElements = element.getElementsByTagName('*');
+		for (let i = 0, n = allElements.length; i < n; i++){
+			if (allElements[i].getAttribute(attribute) !== null){
+				  // Element exists with attribute. Add to array.
+				  matchingElements.push(allElements[i]);
+				}
+		}
+		*/
+		//шаблонные строки
+		let matchingElements = element.querySelectorAll(`[${attributeName}]`);
+		return matchingElements;
+	};
+
+	assistant.getDocumentElementsWithClassName = function(className, element = document)
+	{
+		//старый код
+		/*
+		 let matchingElements = [];
+		 matchingElements = element.getElementsByClassName(className);
+		 */
+		//шаблонные строки
+		let matchingElements = element.querySelectorAll(`.${className}`);
+		return matchingElements;
+	};
+
+	assistant.addClass = function(className){
+		elementsStack[elementsCount-1].classList.add(className);
+		return this;
+	};
+
+	assistant.removeClass = function(className){
+		elementsStack[elementsCount-1].classList.remove(className);
+		return this;
+	};
+
+	assistant.addAttribute = function(attributeName, attributeContent){
+		elementsStack[elementsCount-1].setAttribute(attributeName, attributeContent);
+		return this;
+	};
+
+	assistant.replace = function(targetElement){
+		document.replaceChild(targetElement, elementsStack[0]);
+		return this;
+	};
+
+	assistant.get = function(){
+		return elementsStack[0];
+	};
+	
 	return assistant;
 })();
 
+let appointEvent = function(eventType, eventTarget, eventFunction){
+	eventTarget[`on${eventType}`] = eventFunction;
+};
 
-
-{
-	//arrow function
-	createByTag:(tagName, stack)=>{
-		let self = this;
-		if (!this.elemsStack)
-			let elemsStack = [];
-		elemsStack.push(document.createElement(tagName));
-		//object literals
-		return {
-			createByTag: self.createByTag,
-			elemsStack
-		};
-	},
-	appendChilds:(elements,classes)=>{
-		if (elements.length < 2)
-			return elements;
-		
-		let DomRootElem = elements[0];
-		DomRootElem.className = classes[0]
-		
-		//let scope
-		for (let i = 1; i < elements.length; i++){
-			elements[i].className = classes[i];
-			elements[0].appendChild(elements[i]);
-		};
-		return elements[0];
-	}
-}
-
-function getAllElementsWithAttribute(attribute)
-{
-  var matchingElements = [];
-  var allElements = document.getElementsByTagName('*');
-  for (var i = 0, n = allElements.length; i < n; i++)
-  {
-    if (allElements[i].getAttribute(attribute) !== null)
-    {
-      // Element exists with attribute. Add to array.
-      matchingElements.push(allElements[i]);
-    }
-  }
-  return matchingElements;
-}
-
-
-
-//class!
+//class
 class MInput {
-		constructor(baseClass){
-			_MInputContainerBaseClass = baseClass;
-			
-			this.mInputContainer = this.buildDom(_MInputContainerBaseClass);
-			
-			_MInputTextElement = this.mInputContainer.getAllElementsWithAttribute('text')[0];
-			
-			this.mInputContainer.getElementByClassName(".cross").addEventListener('click', (e)=>{this.setTextInputValue("")}, false)
-		}
-		
-		getTextInputValue(){
-			return _MInputTextElement.value;
-		}
-		
-		setTextInputValue(newValue){
-			_MInputTextElement.value = newValue;
-		}
-		
-		//возможно надо переписть buildDOm так, чтобы он наследовался, но не было повтора для, например, генерации опций комбика
-		buildDom(baseClassName){
-			//array destructing
-			let [inputContainer, input, clearCross] = domGenWrapperObject.createByTag('div').createByTag('input').createByTag('div');
-			
-			//spread operator
-			let appendArgs = [[inputContainer, input, clearCross],baseClassName];
-			return domGenWrapperObject.appendChilds(...appendArgs);
-		}
+	constructor(targetElement) {
+		this.element = domAssistant('div').addClass('m-input-container')
+			.appendChilds(['input']).addAttribute('type', 'text')
+			.appendChilds(['div']).addClass('clr-cross').addClass('display-none')
+			.replace(targetElement).get();
+
+		this.input = domAssistant.getDocumentElementsWithAttribute('text',this.element)[0];
+
+		Object.defineProperty(this, "value",{
+			get: () => { return this.input.value; },
+			set: (nweValue) => { this.input.value = newValue; },
+			enumerable: true,
+			writable: true
+		});
+
+		this.cross = domAssistant.getDocumentElementsWithClassName('clr-cross',this.element)[0];
+
+		appointEvent('click',this.cross,()=>{
+			this.value = "";
+			domAssistant(this.cross).addClass('display-none');
+		});
+
+		appointEvent('input',this.input,()=>{
+			if (this.value != "")
+				domAssistant(this.cross).removeClass('display-none');
+			else
+				domAssistant(this.cross).addClass('display-none');
+		});
 	}
+}
 
-var mInputClassWrapper = function(cls){
+//обертка для хранения приватных полей и методов класса
+/*
+let mInputClassWrapper = function(cls){
 	let _MInputContainerBaseClass;
-	
 	let _MInputTextElement;
-
 	return cls;
 }
+*/
 
 //из-за обертки проблемка, для наследования надо или переписать обертку или забить на приветные переменные, или вынести как-то класс из обертки
 class MSelectInput extends MInput{
@@ -123,27 +160,29 @@ class MSelectInput extends MInput{
 		super(location, classes, eventListeners);
 	}
 	*/
-	
+	/*
     buildDom(clsasses){
         let baseInputContainer = super(clsasses);
 		
 		baseInputContainer.appendChild('div');
 		//и тд, докрутить до инпута с опциями
-    }
+    }*/
 }
 
 let initMElements = function(){
-	let inputElems = document.getElementsByTagName("m-input");
+	let inputElements = document.getElementsByTagName("m-input");
 	let selectInputElems = document.getElementsByTagName("m-select-input");
 	let multiSelectInputElems = document.getElementsByTagName("m-multi-select-input");
+
+	let inputObjectList = [];
+
+	//вариант с использованием обертки, содержащей приветные поля класса
+	//let clsWithLocal = mInputClassWrapper(MInput);
+	//let mInput = new (mInputClassWrapper())("blc");
 	
-	let clsWithLocal = mInputClassWrapper(MInput);
-	
-	let extClsWithLocal = mInputClassWrapper(MSelectInput);
-	
-	for (let i = 0; i < inputElems.length; i++){
-		let mInput = new (mInputClassWrapper())("blc");
-		document.replaceChild(inputElems[i], mInput.mInputContainer);
+	for (let i = 0; i < inputElements.length; i++){
+		let inputObject = new MInput(inputElements[i]);
+		inputObjectList.push(inputObject);
 	}	
 };
 
