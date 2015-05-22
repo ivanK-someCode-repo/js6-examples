@@ -13,6 +13,8 @@ let domAssistant = (function(){
 			elementsStack[0] = document.createElement(tagName);
 		else
 			elementsStack[0] = tagName;
+
+		return assistant;
 	};
 	
 	assistant.createByTag = function(){
@@ -85,7 +87,7 @@ let domAssistant = (function(){
 	};
 
 	assistant.replace = function(targetElement){
-		document.replaceChild(targetElement, elementsStack[0]);
+		document.replaceChild(elementsStack[0],targetElement);
 		return this;
 	};
 
@@ -208,9 +210,9 @@ class MSelectInput extends MInput{
 }
 
 let initMElements = function(){
-	let inputElements = document.getElementsByTagName("m-input");
-	let selectInputElems = document.getElementsByTagName("m-select-input");
-	let multiSelectInputElems = document.getElementsByTagName("m-multi-select-input");
+	let inputElements = domAssistant.getDocumentElementsWithAttribute("m-input");
+	let selectInputElems = domAssistant.getDocumentElementsWithAttribute("m-select-input");
+	let multiSelectInputElems = domAssistant.getDocumentElementsWithAttribute("m-multi-select-input");
 
 	let inputObjectList = [];
 
