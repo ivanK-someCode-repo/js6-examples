@@ -1,18 +1,18 @@
 'use strict'
 
-//TODO
-//проверка на null и тд
-
 //можно сделать классом - оберткой над document для удобного создания элементов
 let domAssistant = (function(){
 	let elementsStack = [];
 	let elementsCount = 0;
 	
-	//хотелось бы, чтоб как в jquery - объект еще и функция
 	function assistant(tagName){
 		elementsStack = [];
-		elementsStack[0] = document.createElement(tagName);
 		elementsCount = 1;
+		
+		if (typeof tagName == "string")
+			elementsStack[0] = document.createElement(tagName);
+		else
+			elementsStack[0] = tagName;
 	};
 	
 	assistant.createByTag = function(){
@@ -20,28 +20,23 @@ let domAssistant = (function(){
 		return this;
 	};
 
-	assistant.appendChilds = function(elements, classes){
+	assistant.appendChilds = function(elements, content){
 		if (!elements || elements.length == 0)
 			return;
 			
 		for (let i = 1; i < elements.length; i++){
 			let newElement = document.createElement(elements[i]);
-			/*
-			if (classes.hasKey(elements[i])){
-				for (let j = 1; j < classes[elements[i]].length; j++)
-					newElement.className = classes[elements[i]][j];
-			}
-			*/
-			elements[0].appendChild(elements[i]);
-			elementsStack.push(elements[i]);
+			if (content)
+				newElement.innerHTML = content;
+			elements[0].appendChild(newElement);
+			elementsStack.push(newElement);
 			elementsCount++;
 		};	
 			
 		return this;
 	};
 
-	assistant.getDocumentElementsWithAttribute = function(attributeName, element = document)
-	{
+	assistant.getDocumentElementsWithAttribute = function(attributeName, element = document){
 		//старый код
 		/*
 		let matchingElements = [];
@@ -58,8 +53,12 @@ let domAssistant = (function(){
 		return matchingElements;
 	};
 
-	assistant.getDocumentElementsWithClassName = function(className, element = document)
-	{
+	assistant.getDocumentElementsWithTagName = function(tagName, element = document){
+		let matchingElements = element.querySelectorAll(`${className}`);
+		return matchingElements;
+	};
+
+	assistant.getDocumentElementsWithClassName = function(className, element = document){
 		//старый код
 		/*
 		 let matchingElements = [];
@@ -69,7 +68,7 @@ let domAssistant = (function(){
 		let matchingElements = element.querySelectorAll(`.${className}`);
 		return matchingElements;
 	};
-
+	
 	assistant.addClass = function(className){
 		elementsStack[elementsCount-1].classList.add(className);
 		return this;
@@ -90,7 +89,9 @@ let domAssistant = (function(){
 		return this;
 	};
 
-	assistant.get = function(){
+	assistant.get = function(last){
+		if (last)
+			return elementsStack[elementsCount-1];
 		return elementsStack[0];
 	};
 	
@@ -99,6 +100,16 @@ let domAssistant = (function(){
 
 let appointEvent = function(eventType, eventTarget, eventFunction){
 	eventTarget[`on${eventType}`] = eventFunction;
+};
+
+let disappointEvent = function(eventType, eventTarget){
+	eventTarget[`on${eventType}`] = null;
+};
+
+let valueCheck = function(value){
+	if (typeof value !== 'undefined' || !value)
+		return true;
+	return false;
 };
 
 //class
@@ -143,30 +154,57 @@ let mInputClassWrapper = function(cls){
 }
 */
 
-//из-за обертки проблемка, для наследования надо или переписать обертку или забить на приветные переменные, или вынести как-то класс из обертки
 class MSelectInput extends MInput{
-    constructor(location, classes, eventListeners){
-        super(location, classes, eventListeners);
+    constructor(targetElement, optionsList = [], offsetMultiplier = 0.1){
+        super(targetElement);
+		
+		this.optionsList = optionsList;
+		
+		this.lastOptionIndex = 0;
+		
+		this.element = domAssistant(this.element).appendChilds(['ul','div']).addClass('ul-arrow').get();
+		
+		this.arrow = domAssistant.getDocumentElementsWithClassName('ul-arrow',this.element)[0];
+		
+		this.ul = domAssistant.getDocumentElementsWithTagName('ul',this.element)[0];
+		
+		this.offset = this.ul.scrollHeight * offsetMultiplier;
+		
+		this.currentOptionValue = null;
+		
+		//события скрытия-показа списка
+		appointEvent('click',this.arrow,()=>{
+			domAssistant(this.ul).removeClass('display-none');
+			appointEvent('click',domAssistant.getDocumentElementsWithTagName("html")[0],(e)=>{this.htmlClickProcess(e)});
+		});
+		
+		//события скролла и рендеринга списка
+		appointEvent('scroll',this.ul,()=>{
+			if (this.ul.scrollTop + this.ul.offsetHeight >= this.ul.scrollHeight - this.offset) {
+				renderOption(this.ul,optionsList[this.lastOptionIndex],(e)=>{
+					this.currentOptionValue = e.target.innerHTML;
+					domAssistant(this.ul).addClass('display-none');
+					disappointEvent('click',domAssistant.getDocumentElementsWithTagName("html")[0]);
+				});
+				
+				lastOptionIndex++;
+				if (lastOptionIndex == optionsList.length)
+					disappointEvent('scroll',this.ul);
+			}
+		});
     }
 
-	/*
-    newMtd(){
-        return "111";
-    }
-	*/
-	
-	/* надо проверить, что будет, если явно не переопределить неизменяемую при наследовании функцию
-	listenDom(dom, listeners){
-		super(location, classes, eventListeners);
+	htmlClickProcess(e){
+		if ($(event.target).closest('div.linbox-only-select') && $(event.target).closest('div.linbox-only-select')[0] != element[0]) {
+			domAssistant(this.ul).addClass('display-none');
+			disappointEvent('click',domAssistant.getDocumentElementsWithTagName("html")[0]);
+		};
 	}
-	*/
-	/*
-    buildDom(clsasses){
-        let baseInputContainer = super(clsasses);
-		
-		baseInputContainer.appendChild('div');
-		//и тд, докрутить до инпута с опциями
-    }*/
+	
+	renderOption(parentElement, optionContent, event){
+		let optionElement = domAssistant(parentElement).appendChilds(['li'], optionContent).get('last');
+		appointEvent('click',optionElement,event);
+	}
 }
 
 let initMElements = function(){

@@ -15,13 +15,12 @@
 	font-size:$m-font-size;
 	font-family:Georgia, 'Times New Roman', Times, serif;
 	height: calc(1em + 10px);
-	width:7em;
 	border: 0;
 	background-color:#fff;
 
 	input[type='text'] {
 	  border:1px solid $m-border-color;
-	  padding:2px calc(1em + 6px) 2px 2px;
+	  padding:2px calc(0.4em + 6px + 1em + 6px) 2px 2px;
 	  height:inherit;
 	  font-size:inherit;
 	  font-family:inherit;
@@ -32,21 +31,34 @@
 		box-shadow:none;
 		border-color:transparent;
 	  }
-	  }
+	}
 	
 	.clear-cross {
 	  position:absolute;
-	  right:5px;
-	  top: calc(50% - 0.5em);
-	  width:1em;
-	  height: 1em;
+	  right: calc(5px + 1em + 5px);
+	  top: calc(50% - 0.2em);
+	  width: 0.4em;
+	  height: 0.4em;
 	  background: url(cancel_32.svg) no-repeat center;
-	  background-size: 1.14em 1.14em;
+	  background-size: 0.4em 0.4em;
 	  //background-size: contain; css-tricks.com/using-svg/
 
 	  &:hover {
 		cursor: pointer;
 	  }
+	}
+	
+	.ul-arrow{
+		position:absolute;
+		top: calc(50% - 0.5em);
+		right:5px;
+		width:1em;
+		height:1em;
+		background-color: gray;
+		
+		&:hover {
+			cursor: pointer;
+		}
 	}
 
 	ul {
