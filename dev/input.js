@@ -87,7 +87,7 @@ let domAssistant = (function(){
 	};
 
 	assistant.replace = function(targetElement){
-		document.replaceChild(elementsStack[0],targetElement);
+		targetElement.parentNode.replaceChild(elementsStack[0],targetElement);
 		return this;
 	};
 
@@ -124,9 +124,17 @@ class MInput {
 
 		this.input = domAssistant.getDocumentElementsWithAttribute('text',this.element)[0];
 
-		Object.defineProperty(this, "value",{
-			get: () => { return this.input.value; },
-			set: (nweValue) => { this.input.value = newValue; },
+		Object.defineProperty(this, "inputValue",{
+			get: () => {
+				if (this.input)
+					return this.input.value;
+				else
+					return null;
+			},
+			set: (newValue) => {
+				if (this.input)
+					this.input.value = newValue;
+			},
 			enumerable: true,
 			writable: true
 		});
@@ -134,12 +142,12 @@ class MInput {
 		this.cross = domAssistant.getDocumentElementsWithClassName('clr-cross',this.element)[0];
 
 		appointEvent('click',this.cross,()=>{
-			this.value = "";
+			this.inputValue = "";
 			domAssistant(this.cross).addClass('display-none');
 		});
 
 		appointEvent('input',this.input,()=>{
-			if (this.value != "")
+			if (this.inputValue != "")
 				domAssistant(this.cross).removeClass('display-none');
 			else
 				domAssistant(this.cross).addClass('display-none');
