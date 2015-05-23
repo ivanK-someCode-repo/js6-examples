@@ -22,23 +22,18 @@ let domAssistant = (function(){
 		return this;
 	};
 
-	assistant.appendChilds = function(elements, content){
-		if (!elements || elements.length == 0)
-			return;
-			
-		for (let i = 1; i < elements.length; i++){
-			let newElement = document.createElement(elements[i]);
-			if (content)
-				newElement.innerHTML = content;
-			elements[0].appendChild(newElement);
-			elementsStack.push(newElement);
-			elementsCount++;
-		};	
-			
+	assistant.appendChild = function(element, content){
+		let newElement = document.createElement(element);
+		if (content)
+			newElement.innerHTML = content;
+		elementsStack[0].appendChild(newElement);
+		elementsStack.push(newElement);
+		elementsCount++;
+
 		return this;
 	};
 
-	assistant.getDocumentElementsWithAttribute = function(attributeName, element = document){
+	assistant.getDocumentElementsWithAttribute = function(attributeName, attributeValue="", element = document){
 		//старый код
 		/*
 		let matchingElements = [];
@@ -51,7 +46,7 @@ let domAssistant = (function(){
 		}
 		*/
 		//шаблонные строки
-		let matchingElements = element.querySelectorAll(`[${attributeName}]`);
+		let matchingElements = element.querySelectorAll(`[${attributeName}="${attributeValue}"]`);
 		return matchingElements;
 	};
 
@@ -118,11 +113,11 @@ let valueCheck = function(value){
 class MInput {
 	constructor(targetElement) {
 		this.element = domAssistant('div').addClass('m-input-container')
-			.appendChilds(['input']).addAttribute('type', 'text')
-			.appendChilds(['div']).addClass('clr-cross').addClass('display-none')
+			.appendChild('input').addAttribute('type', 'text')
+			.appendChild('div').addClass('clear-cross').addClass('display-none')
 			.replace(targetElement).get();
 
-		this.input = domAssistant.getDocumentElementsWithAttribute('text',this.element)[0];
+		this.input = domAssistant.getDocumentElementsWithAttribute('type','text',this.element)[0];
 
 		Object.defineProperty(this, "inputValue",{
 			get: () => {
@@ -134,12 +129,10 @@ class MInput {
 			set: (newValue) => {
 				if (this.input)
 					this.input.value = newValue;
-			},
-			enumerable: true,
-			writable: true
+			}
 		});
 
-		this.cross = domAssistant.getDocumentElementsWithClassName('clr-cross',this.element)[0];
+		this.cross = domAssistant.getDocumentElementsWithClassName('clear-cross',this.element)[0];
 
 		appointEvent('click',this.cross,()=>{
 			this.inputValue = "";
@@ -172,7 +165,7 @@ class MSelectInput extends MInput{
 		
 		this.lastOptionIndex = 0;
 		
-		this.element = domAssistant(this.element).appendChilds(['ul','div']).addClass('ul-arrow').get();
+		this.element = domAssistant(this.element).appendChild('ul').appendChild('div').addClass('ul-arrow').get();
 		
 		this.arrow = domAssistant.getDocumentElementsWithClassName('ul-arrow',this.element)[0];
 		
@@ -212,7 +205,7 @@ class MSelectInput extends MInput{
 	}
 	
 	renderOption(parentElement, optionContent, event){
-		let optionElement = domAssistant(parentElement).appendChilds(['li'], optionContent).get('last');
+		let optionElement = domAssistant(parentElement).appendChild('li', optionContent).get('last');
 		appointEvent('click',optionElement,event);
 	}
 }
