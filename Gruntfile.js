@@ -35,6 +35,7 @@ module.exports = function(grunt) {
 		},
 		dist: {
 		  files: {
+			'prod/domAssistant.js': ['dev/domAssistant.js'],
 			'prod/scripts.js': ['dev/input.js']
 		  }
 		}
