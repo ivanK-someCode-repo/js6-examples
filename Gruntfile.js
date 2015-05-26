@@ -31,12 +31,18 @@ module.exports = function(grunt) {
     },
 	babel: {
 		options: {
-		  sourceMap: true
+		  sourceMap: true,
+		  modules: "amdStrict"
 		},
 		dist: {
 		  files: {
-			'prod/domAssistant.js': ['dev/domAssistant.js'],
-			'prod/scripts.js': ['dev/input.js']
+			'prod/domAssistant.js': ['dev/domAssistant.es6'],
+			'prod/scripts.js': ['dev/input.es6']
+			
+			//expand: true,
+			//cwd: 'dev/',
+			//src: ['**/*.es6'],
+			//dest: 'prod/',
 		  }
 		}
   }

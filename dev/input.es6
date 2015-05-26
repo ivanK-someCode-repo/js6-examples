@@ -1,7 +1,9 @@
 'use strict'
 
 //можно сделать классом - оберткой над document для удобного создания элементов
-import domAssistant from "domAssistant";
+import domAssistant from "./domAssistant";
+
+import * as domReady from "js/domReady";
 
 let appointEvent = function(eventType, eventTarget, eventFunction){
 	eventTarget[`on${eventType}`] = eventFunction;
@@ -135,4 +137,8 @@ let initMElements = function(){
 	}	
 };
 
-document.addEventListener('DOMContentLoaded', initMElements, false);
+domReady(function () {
+		initMElements();
+    });
+
+//document.addEventListener('DOMContentLoaded', initMElements, false);
