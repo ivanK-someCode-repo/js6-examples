@@ -1,0 +1,41 @@
+[m-scrolled]{
+	$m-thickness: 0.5em;
+	
+	v-slider-bar{
+		position: absolute;
+		right: 0;
+		top: 0;
+		width: $m-thickness;
+		height: inherit;
+		background-color: #b0b0b0;
+		opacity:0.4;
+
+		v-slider{
+			position:absolute;
+			top:0;
+			background-color:gray;
+			opacity:0.6;
+			width:inherit;
+			border-radius: $m-thickness;
+		}
+	} 
+
+	h-slider-bar{
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		width: inherit;
+		height: $m-thickness;
+		background-color: #b0b0b0;
+		opacity:0.4;
+	 
+		h-slider{
+			position:absolute;
+			left:0;
+			background-color:gray;
+			opacity:0.6;
+			height:inherit;
+			border-radius: $m-thickness;
+		}
+	}
+}

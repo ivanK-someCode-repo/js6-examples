@@ -25,7 +25,8 @@ module.exports = function(grunt) {
         },
         dist: {
             files: {
-                'prod/styles.css': ['dev/input.scss']
+                'prod/input_styles.css': ['dev/input.scss'],
+				'prod/scroll_styles.css': ['dev/scroll.scss']
             }
         }
     },
@@ -37,8 +38,8 @@ module.exports = function(grunt) {
 		dist: {
 		  files: {
 			'prod/domAssistant.js': ['dev/domAssistant.es6'],
-			'prod/scripts.js': ['dev/input.es6']
-			
+			'prod/input_scripts.js': ['dev/input.es6'],
+			'prod/scroll_scripts.js': ['dev/scroll.es6']
 			//expand: true,
 			//cwd: 'dev/',
 			//src: ['**/*.es6'],

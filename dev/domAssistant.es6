@@ -30,6 +30,22 @@ var domAssistant = (function(){
 		return this;
 	};
 
+	assistant.lastNodeAppendChild = function(element, content){
+		let newElement = document.createElement(element);
+		if (content)
+			newElement.innerHTML = content;
+		elementsStack[elementsCount-1].appendChild(newElement);
+		elementsStack.push(newElement);
+		elementsCount++;
+
+		return this;
+	};
+	
+	assistant.removeChild = function(element){
+		elementsStack[0].removeChild(element);
+		return elementsStack[0].parentElement;
+	};
+	
 	assistant.getDocumentElementsWithAttribute = function(attributeName, attributeValue="", element = document){
 		//старый код
 		/*
@@ -83,6 +99,21 @@ var domAssistant = (function(){
 		return this;
 	};
 
+	assistant.appointEvent = function(eventType, eventTarget = elementsStack[elementsCount-1], eventFunction){
+		eventTarget[`on${eventType}`] = eventFunction;
+		return this;
+	};
+	
+	assistant.disappointEvent = function(eventType, eventTarget = elementsStack[elementsCount-1]){
+		eventTarget[`on${eventType}`] = null;
+		return this;
+	};
+	
+	assistant.rewriteCSSRule = function(rule, value){
+		elementsStack[elementsCount-1].style[rule] = `${value}`;
+		return this;
+	};
+	
 	assistant.get = function(last){
 		if (last)
 			return elementsStack[elementsCount-1];

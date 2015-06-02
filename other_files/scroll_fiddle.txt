@@ -1,0 +1,3 @@
+http://www.w3.org/wiki/Dynamic_style_-_manipulating_CSS_with_JavaScript
+
+http://jsfiddle.net/3hLm7tet/5/
