@@ -1,7 +1,10 @@
 var domAssistant = (function(){
 	let elementsStack = [];
 	let elementsCount = 0;
-	
+
+	//TODO: in jQUery object, $ is array itself.
+	//We need to remove elementsStack, make Array object the assistants prototype and append elements to assistant
+
 	function assistant(tagName){
 		elementsStack = [];
 		elementsCount = 1;

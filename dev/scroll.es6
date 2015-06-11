@@ -1,6 +1,6 @@
 'use strict'
 
-import domAssistant from "./domAssistant";
+import dA from "./domAssistant";
 
 import {isNullUndefEmptyNaN, executeSetOfFunctions} from "./commonFunctions";
 
@@ -8,9 +8,8 @@ import * as domReady from "js/domReady";
 
 class MScroll {
 	constructor(targetElement){
-		this.element = dA(targetElement)
-			.appointEvent('DOMSubtreeModified', this.scrollAreaChangeEvent)
-			.get();
+		let fff = this;
+		this.element = dA(targetElement).get();
 	}
 	
 	scrollAreaChangeEvent(){
@@ -149,13 +148,14 @@ class MScroll {
 	}
 };
 
-let initMElements = function(){
+let initMScroll = function(){
 	let scrolledElements = dA.getDocumentElementsWithAttribute("m-scrolled");
 	let scrollObjectList = new Map();
 	let i = 0;
 	
 	for (; i < scrolledElements.length; i++){
 		let scrollObject = new MScroll(scrolledElements[i]);
+		dA(scrollObject.element).appointEvent('DOMSubtreeModified', scrollObject.scrollAreaChangeEvent.bind(scrollObject))
 		scrollObjectList.set(scrollObject, scrollObject.scrollAreaChangeEvent);
 	};
 	
