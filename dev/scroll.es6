@@ -9,24 +9,27 @@ import * as domReady from "js/domReady";
 class MScroll {
 	constructor(targetElement){
 		let fff = this;
-		this.element = dA(targetElement).get();
+		this.element = dA(targetElement).appointEvent('DOMSubtreeModified', this.scrollAreaChangeEvent).get();
 	}
 	
 	scrollAreaChangeEvent(){
+		//событие вызываем или при ресайзе окна или при изменении контента-дерева внутри целевого элемента, на который вешае скродд
+		console.log(this)
+		//если контент шире - добавляем вертикальный ползунок и полоску
 		if (this.element.offsetWidth < this.element.scrollWidth && !this.vBar){
-			vScrollElementsAttach();
+			this.vScrollElementsAttach();
 			this.vScrollMouseDownEventBind();
 			this.vScrollAreaWheelEventBind();
 			this.vBarClickEventBind();
 		}
-			
+			//в противном случае убираем
 		if (this.element.offsetWidth == this.element.scrollWidth && this.vBar){
-			vScrollElementsDetach();
+			this.vScrollElementsDetach();
 			this.vScrollMouseDownEventUnbind();
 			this.vScrollAreaWheelEventUnbind();
 			this.vBarClickEventUnbind();
 		}
-		
+		//то же для горизонтальной прокрутки
 		if (this.element.offsetWidth < this.element.scrollWidth && !this.hBar){
 			this.hScrollElementsAttach();
 			this.hScrollMouseDownEventBind();
@@ -36,13 +39,14 @@ class MScroll {
 		}
 		
 		if (this.element.offsetWidth == this.element.scrollWidth && this.hBar){
-			hScrollElementsDetach();
+			this.hScrollElementsDetach();
 			this.hScrollMouseDownEventUnbind();
 			this.hScrollAreaWheelEventUnbind();
 			this.hBarClickEventUnbind();
 		}
 	}		
-	
+
+	//элементы скрола - полоска bar и ползунок
 	vScrollElementsAttach(){
 		this.vSlider = dA(this.element).appendChild('v-slider-bar')
 							.lastNodeAppendChild('v-slider').get();
@@ -64,7 +68,8 @@ class MScroll {
 	hScrollElementsDetach(){
 		 dA(this.hBar).removeChild(this.hSlider).removeChild(this.hBar);
 	}
-	
+
+	//зажатие ползунка - биндим событие подъема-опускания мыши
 	vScrollMouseDownEventBind(){
 		dA.appointEvent('mousedown', this.vSlider, (mDownEvent)=>{
 			dA.appointEvent('mousemove', window, (moveEvent)=>{
@@ -76,7 +81,7 @@ class MScroll {
 	vScrollMouseDownEventUnbind(){
 		dA.disappointEvent('mousedown', this.vBar);
 	}
-	
+	//бинд колеса мыши
 	vScrollAreaWheelEventBind(){
 		dA.appointEvent('wheel', this.vBar, (mWheelEvent)=>{
 			if (this.vBar.style.top > 0 && this.vBar.style.top < this.vSlider.style.offsetHeight)
@@ -87,7 +92,7 @@ class MScroll {
 	vScrollAreaWheelEventUnbind(){
 		dA.disappointEvent('wheel', this.vBar);
 	}
-	
+	//бинд клика по полоске для быстрой прокрутки к месту клика
 	vBarClickEventBind(){
 		dA.appointEvent('click', this.vBar, (clickEvent)=>{
 			if (clickEvent.target = this.vSlider)
@@ -155,11 +160,13 @@ let initMScroll = function(){
 	
 	for (; i < scrolledElements.length; i++){
 		let scrollObject = new MScroll(scrolledElements[i]);
-		dA(scrollObject.element).appointEvent('DOMSubtreeModified', scrollObject.scrollAreaChangeEvent.bind(scrollObject))
-		scrollObjectList.set(scrollObject, scrollObject.scrollAreaChangeEvent);
+		scrollObjectList.set(scrollObject, scrollObject.scrollAreaChangeEvent.bind(scrollObject));
 	};
-	
+
+	//ресайз окна - могут измениться размеры элементов и мы должны пересчитать им всем скроллы
 	window.addEventListener("resize", ()=>{ executeSetOfFunctions( scrollObjectList.values() ) });
+
+	//событие 'отпуска' мыши - нужно для случая когда была зажата мышь на ползунке и мы вышли за пределы элемента
 	window.addEventListener("mouseup", ()=>{ dA.disappointEvent('mousemove', window) });
 };
 
