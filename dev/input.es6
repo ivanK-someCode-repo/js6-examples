@@ -13,7 +13,7 @@ class MInput {
 			.appendChild('div').addClass('clear-cross').addClass('display-none')
 			.replace(targetElement).get();
 
-		this.input = dA.getDocumentElementsWithAttribute('type','text',this.element)[0];
+		this.input = dA.getByAttribute('type','text',this.element)[0];
 
 		Object.defineProperty(this, "inputValue",{
 			get: () => {
@@ -28,7 +28,7 @@ class MInput {
 			}
 		});
 
-		this.cross = dA.getDocumentElementsWithClassName('clear-cross',this.element)[0];
+		this.cross = dA.getByClassName('clear-cross',this.element)[0];
 
 		dA.appointEvent('click',this.cross,()=>{
 			this.inputValue = "";
@@ -63,9 +63,9 @@ class MSelectInput extends MInput{
 		
 		this.element = dA(this.element).appendChild('ul').appendChild('div').addClass('ul-arrow').get();
 		
-		this.arrow = dA.getDocumentElementsWithClassName('ul-arrow',this.element)[0];
+		this.arrow = dA.getByClassName('ul-arrow',this.element)[0];
 		
-		this.ul = dA.getDocumentElementsWithTagName('ul',this.element)[0];
+		this.ul = dA.getByTagName('ul',this.element)[0];
 		
 		this.offset = this.ul.scrollHeight * offsetMultiplier;
 		
@@ -74,7 +74,7 @@ class MSelectInput extends MInput{
 		//события скрытия-показа списка
 		dA.appointEvent('click',this.arrow,()=>{
 			dA(this.ul).removeClass('display-none');
-			dA.appointEvent('click',dA.getDocumentElementsWithTagName("html")[0],(e)=>{this.htmlClickProcess(e)});
+			dA.appointEvent('click',dA.getByTagName("html")[0],(e)=>{this.htmlClickProcess(e)});
 		});
 		
 		//события скролла и рендеринга списка
@@ -83,7 +83,7 @@ class MSelectInput extends MInput{
 				renderOption(this.ul,optionsList[this.lastOptionIndex],(e)=>{
 					this.currentOptionValue = e.target.innerHTML;
 					dA(this.ul).addClass('display-none');
-					dA.disappointEvent('click',dA.getDocumentElementsWithTagName("html")[0]);
+					dA.disappointEvent('click',dA.getByTagName("html")[0]);
 				});
 				
 				lastOptionIndex++;
@@ -96,7 +96,7 @@ class MSelectInput extends MInput{
 	htmlClickProcess(e){
 		if ($(event.target).closest('div.linbox-only-select') && $(event.target).closest('div.linbox-only-select')[0] != element[0]) {
 			dA(this.ul).addClass('display-none');
-			dA.disappointEvent('click',dA.getDocumentElementsWithTagName("html")[0]);
+			dA.disappointEvent('click',dA.getByTagName("html")[0]);
 		};
 	}
 	
@@ -107,9 +107,9 @@ class MSelectInput extends MInput{
 }
 
 let initMElements = function(){
-	let inputElements = dA.getDocumentElementsWithAttribute("m-input");
-	let selectInputElems = dA.getDocumentElementsWithAttribute("m-select-input");
-	let multiSelectInputElems = dA.getDocumentElementsWithAttribute("m-multi-select-input");
+	let inputElements = dA.getByAttribute("m-input");
+	let selectInputElems = dA.getByAttribute("m-select-input");
+	let multiSelectInputElems = dA.getByAttribute("m-multi-select-input");
 
 	let inputObjectList = [];
 	let i = 0;

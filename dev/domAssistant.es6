@@ -1,24 +1,51 @@
 var domAssistant = (function(){
-	let elementsStack = [];
-	let elementsCount = 0;
+	//some private variables here
 
-	//TODO: in jQUery object, $ is array itself.
-	//We need to remove elementsStack, make Array object the assistants prototype and append elements to assistant
+	//todo: length-1 to last function
 
 	function assistant(tagName){
-		elementsStack = [];
-		elementsCount = 1;
-		
+		//assistant.push = [].__proto__.push;
+		//assistant.push = Array.prototype.push;
+		//assistant.length = 1;
+
 		if (typeof tagName == "string")
-			elementsStack[0] = document.createElement(tagName);
+			assistant.push(document.createElement(tagName));//assistant[0] = document.createElement(tagName);
 		else
-			elementsStack[0] = tagName;
+			assistant.push(tagName);//assistant[0] = tagName;
 
 		return assistant;
 	};
-	
+
+	function lenght(){
+		for (let key in assistant){
+			console.log(key);
+		}
+
+
+		let keys = assistant.keys();
+		let numKeys = keys.find(x => Number.isInteger(x));
+		return numKeys.length;
+	};
+
+	assistant.push = function(arg){
+
+		assistant[lenght()] = arg;
+		/*
+		let push = [].push;
+		console.dir(push);
+		console.dir(assistant);
+
+		assistant.push = [].push;
+		console.dir(assistant);
+		assistant.push(11);
+		let f = {};
+		push.call(f, arg);
+		push.call(assistant, arg);
+		*/
+	};
+
 	assistant.createByTag = function(){
-		elementsStack[0] = (document.createElement(tagName));
+		assistant[0] = (document.createElement(tagName));
 		return this;
 	};
 
@@ -26,9 +53,9 @@ var domAssistant = (function(){
 		let newElement = document.createElement(element);
 		if (content)
 			newElement.innerHTML = content;
-		elementsStack[0].appendChild(newElement);
-		elementsStack.push(newElement);
-		elementsCount++;
+		assistant[0].appendChild(newElement);
+		assistant.push(newElement);
+		//elementsCount++;
 
 		return this;
 	};
@@ -37,19 +64,19 @@ var domAssistant = (function(){
 		let newElement = document.createElement(element);
 		if (content)
 			newElement.innerHTML = content;
-		elementsStack[elementsCount-1].appendChild(newElement);
-		elementsStack.push(newElement);
-		elementsCount++;
+		assistant[length()-1].appendChild(newElement);
+		assistant.push(newElement);
+		//elementsCount++;
 
 		return this;
 	};
 	
 	assistant.removeChild = function(element){
-		elementsStack[0].removeChild(element);
-		return elementsStack[0].parentElement;
+		assistant[0].removeChild(element);
+		return assistant[0].parentElement;
 	};
 	
-	assistant.getDocumentElementsWithAttribute = function(attributeName, attributeValue="", element = document){
+	assistant.getByAttribute = function(attributeName, attributeValue="", element = document){
 		//старый код
 		/*
 		let matchingElements = [];
@@ -66,12 +93,12 @@ var domAssistant = (function(){
 		return matchingElements;
 	};
 
-	assistant.getDocumentElementsWithTagName = function(tagName, element = document){
+	assistant.getByTagName = function(tagName, element = document){
 		let matchingElements = element.querySelectorAll(`${className}`);
 		return matchingElements;
 	};
 
-	assistant.getDocumentElementsWithClassName = function(className, element = document){
+	assistant.getByClassName = function(className, element = document){
 		//старый код
 		/*
 		 let matchingElements = [];
@@ -83,17 +110,17 @@ var domAssistant = (function(){
 	};
 	
 	assistant.addClass = function(className){
-		elementsStack[elementsCount-1].classList.add(className);
+		assistant[length()-1].classList.add(className);
 		return this;
 	};
 
 	assistant.removeClass = function(className){
-		elementsStack[elementsCount-1].classList.remove(className);
+		assistant[length()-1].classList.remove(className);
 		return this;
 	};
 
 	assistant.addAttribute = function(attributeName, attributeContent){
-		elementsStack[elementsCount-1].setAttribute(attributeName, attributeContent);
+		assistant[length()-1].setAttribute(attributeName, attributeContent);
 		return this;
 	};
 
@@ -102,25 +129,25 @@ var domAssistant = (function(){
 		return this;
 	};
 
-	assistant.appointEvent = function(eventType, eventTarget = elementsStack[elementsCount-1], eventFunction){
+	assistant.appointEvent = function(eventType, eventTarget = assistant[length()-1], eventFunction = function(){}){
 		eventTarget[`on${eventType}`] = eventFunction;
 		return this;
 	};
 	
-	assistant.disappointEvent = function(eventType, eventTarget = elementsStack[elementsCount-1]){
+	assistant.disappointEvent = function(eventType, eventTarget = assistant[length()-1]){
 		eventTarget[`on${eventType}`] = null;
 		return this;
 	};
 	
 	assistant.rewriteCSSRule = function(rule, value){
-		elementsStack[elementsCount-1].style[rule] = `${value}`;
+		assistant[length()-1].style[rule] = `${value}`;
 		return this;
 	};
 	
 	assistant.get = function(last){
 		if (last)
-			return elementsStack[elementsCount-1];
-		return elementsStack[0];
+			return assistant[length()-1];
+		return assistant[0];
 	};
 	
 	return assistant;

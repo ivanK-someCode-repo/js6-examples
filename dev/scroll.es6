@@ -171,5 +171,8 @@ let initMScroll = function(){
 };
 
 domReady(function () {
-	initMScroll();
+	//initMScroll();
+	let scrolledElements = dA.getByAttribute("m-scrolled");
+	let ddda = dA(scrolledElements[0]).addClass('class1').appendChild('v-slider-bar')
+		.lastNodeAppendChild('v-slider').get()
 });
