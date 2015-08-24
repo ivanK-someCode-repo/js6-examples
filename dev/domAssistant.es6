@@ -1,48 +1,9 @@
 var domAssistant = (function(){
 	//some private variables here
 
-	//todo: length-1 to last function
+	let assistant = Object.create(null);
 
-	function assistant(tagName){
-		//assistant.push = [].__proto__.push;
-		//assistant.push = Array.prototype.push;
-		//assistant.length = 1;
-
-		if (typeof tagName == "string")
-			assistant.push(document.createElement(tagName));//assistant[0] = document.createElement(tagName);
-		else
-			assistant.push(tagName);//assistant[0] = tagName;
-
-		return assistant;
-	};
-
-	function lenght(){
-		for (let key in assistant){
-			console.log(key);
-		}
-
-
-		let keys = assistant.keys();
-		let numKeys = keys.find(x => Number.isInteger(x));
-		return numKeys.length;
-	};
-
-	assistant.push = function(arg){
-
-		assistant[lenght()] = arg;
-		/*
-		let push = [].push;
-		console.dir(push);
-		console.dir(assistant);
-
-		assistant.push = [].push;
-		console.dir(assistant);
-		assistant.push(11);
-		let f = {};
-		push.call(f, arg);
-		push.call(assistant, arg);
-		*/
-	};
+	assistant.push = Array.prototype.push;
 
 	assistant.createByTag = function(){
 		assistant[0] = (document.createElement(tagName));
@@ -55,7 +16,6 @@ var domAssistant = (function(){
 			newElement.innerHTML = content;
 		assistant[0].appendChild(newElement);
 		assistant.push(newElement);
-		//elementsCount++;
 
 		return this;
 	};
@@ -64,9 +24,8 @@ var domAssistant = (function(){
 		let newElement = document.createElement(element);
 		if (content)
 			newElement.innerHTML = content;
-		assistant[length()-1].appendChild(newElement);
+		assistant[assistant.length-1].appendChild(newElement);
 		assistant.push(newElement);
-		//elementsCount++;
 
 		return this;
 	};
@@ -110,47 +69,60 @@ var domAssistant = (function(){
 	};
 	
 	assistant.addClass = function(className){
-		assistant[length()-1].classList.add(className);
+		assistant[assistant.length-1].classList.add(className);
 		return this;
 	};
 
 	assistant.removeClass = function(className){
-		assistant[length()-1].classList.remove(className);
+		assistant[assistant.length-1].classList.remove(className);
 		return this;
 	};
 
 	assistant.addAttribute = function(attributeName, attributeContent){
-		assistant[length()-1].setAttribute(attributeName, attributeContent);
+		assistant[assistant.length-1].setAttribute(attributeName, attributeContent);
 		return this;
 	};
 
 	assistant.replace = function(targetElement){
-		targetElement.parentNode.replaceChild(elementsStack[0],targetElement);
+		targetElement.parentNode.replaceChild(assistant[0],targetElement);
 		return this;
 	};
 
-	assistant.appointEvent = function(eventType, eventTarget = assistant[length()-1], eventFunction = function(){}){
+	assistant.appointEvent = function(eventType, eventTarget = assistant[assistant.length-1], eventFunction = function(){}){
 		eventTarget[`on${eventType}`] = eventFunction;
 		return this;
 	};
 	
-	assistant.disappointEvent = function(eventType, eventTarget = assistant[length()-1]){
+	assistant.disappointEvent = function(eventType, eventTarget = assistant[assistant.length-1]){
 		eventTarget[`on${eventType}`] = null;
 		return this;
 	};
 	
 	assistant.rewriteCSSRule = function(rule, value){
-		assistant[length()-1].style[rule] = `${value}`;
+		assistant[assistant.length-1].style[rule] = `${value}`;
 		return this;
 	};
 	
 	assistant.get = function(last){
 		if (last)
-			return assistant[length()-1];
+			return assistant[assistant.length-1];
 		return assistant[0];
 	};
-	
-	return assistant;
+
+	function assistantInterface(tagName){
+		let assistantObject = Object.create(assistant);
+
+		if (typeof tagName == "string")
+			assistantObject.push(document.createElement(tagName));
+		else
+			assistantObject.push(tagName);
+
+		return assistantObject;
+	};
+
+	Object.setPrototypeOf(assistantInterface, assistant);
+
+	return assistantInterface;
 })();
 
 export default domAssistant;
