@@ -6,7 +6,7 @@ var domAssistant = (function(){
 	assistant.push = Array.prototype.push;
 
 	assistant.createByTag = function(){
-		assistant[0] = (document.createElement(tagName));
+		this[0] = (document.createElement(tagName));
 		return this;
 	};
 
@@ -14,8 +14,8 @@ var domAssistant = (function(){
 		let newElement = document.createElement(element);
 		if (content)
 			newElement.innerHTML = content;
-		assistant[0].appendChild(newElement);
-		assistant.push(newElement);
+		this[0].appendChild(newElement);
+		this.push(newElement);
 
 		return this;
 	};
@@ -24,15 +24,15 @@ var domAssistant = (function(){
 		let newElement = document.createElement(element);
 		if (content)
 			newElement.innerHTML = content;
-		assistant[assistant.length-1].appendChild(newElement);
-		assistant.push(newElement);
+		this[this.length-1].appendChild(newElement);
+		this.push(newElement);
 
 		return this;
 	};
 	
 	assistant.removeChild = function(element){
-		assistant[0].removeChild(element);
-		return assistant[0].parentElement;
+		this[0].removeChild(element);
+		return this[0].parentElement;
 	};
 	
 	assistant.getByAttribute = function(attributeName, attributeValue="", element = document){
@@ -69,44 +69,44 @@ var domAssistant = (function(){
 	};
 	
 	assistant.addClass = function(className){
-		assistant[assistant.length-1].classList.add(className);
+		this[this.length-1].classList.add(className);
 		return this;
 	};
 
 	assistant.removeClass = function(className){
-		assistant[assistant.length-1].classList.remove(className);
+		this[this.length-1].classList.remove(className);
 		return this;
 	};
 
 	assistant.addAttribute = function(attributeName, attributeContent){
-		assistant[assistant.length-1].setAttribute(attributeName, attributeContent);
+		this[this.length-1].setAttribute(attributeName, attributeContent);
 		return this;
 	};
 
 	assistant.replace = function(targetElement){
-		targetElement.parentNode.replaceChild(assistant[0],targetElement);
+		targetElement.parentNode.replaceChild(this[0],targetElement);
 		return this;
 	};
 
-	assistant.appointEvent = function(eventType, eventTarget = assistant[assistant.length-1], eventFunction = function(){}){
+	assistant.appointEvent = function(eventType, eventTarget = this[this.length-1], eventFunction = function(){}){
 		eventTarget[`on${eventType}`] = eventFunction;
 		return this;
 	};
 	
-	assistant.disappointEvent = function(eventType, eventTarget = assistant[assistant.length-1]){
+	assistant.disappointEvent = function(eventType, eventTarget = this[this.length-1]){
 		eventTarget[`on${eventType}`] = null;
 		return this;
 	};
 	
 	assistant.rewriteCSSRule = function(rule, value){
-		assistant[assistant.length-1].style[rule] = `${value}`;
+		this[this.length-1].style[rule] = `${value}`;
 		return this;
 	};
 	
 	assistant.get = function(last){
 		if (last)
-			return assistant[assistant.length-1];
-		return assistant[0];
+			return this[this.length-1];
+		return this[0];
 	};
 
 	function assistantInterface(tagName){
