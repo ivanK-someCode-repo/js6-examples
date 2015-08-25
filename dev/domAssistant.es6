@@ -1,6 +1,6 @@
 var domAssistant = (function(){
 	//some private variables here
-
+	
 	let assistant = Object.create(null);
 
 	assistant.push = Array.prototype.push;
